@@ -12,7 +12,7 @@
 //   TELEGRAM_BOT_TOKEN  (secret)  token del bot
 //   GH_PAT              (secret)  GitHub fine-grained PAT sul repo: Contents R/W
 //   WEBHOOK_SECRET      (secret)  stringa a caso, la stessa passata a setWebhook
-//   GH_OWNER            (var)     es. LucaDev990
+//   GH_OWNER            (var)     es. your-github-username
 //   GH_REPO             (var)     es. finance
 //   TELEGRAM_CHAT_ID    (var)     il tuo chat id autorizzato
 
