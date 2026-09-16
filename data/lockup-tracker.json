@@ -1,0 +1,11 @@
+{
+  "descrizione": "Tracker scadenze lockup per IPO recenti. Aggiornato dal catalyst-scanner a ogni giro bisettimanale. Pattern storico: il prezzo tende a calare nelle 4-6 settimane prima della scadenza (selling pressure attesa) e spesso forma un bottom locale attorno al giorno di sblocco.",
+  "ultimo_aggiornamento": "YYYY-MM-DD",
+  "avvertenze": [
+    "Le scadenze sono stime: alcune strutture lockup hanno tranche multiple o clausole di accelerazione.",
+    "Il pattern 'buy-the-unlock' funziona meglio su titoli con fondamentali solidi e flottante già stabilizzato.",
+    "Verificare sempre la struttura lockup esatta sullo S-1 prima di entrare."
+  ],
+  "ipo_recenti": [],
+  "archiviati": []
+}

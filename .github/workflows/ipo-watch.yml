@@ -1,0 +1,45 @@
+name: IPO watch (EDGAR)
+
+# Sorveglia EDGAR per il PROSPETTO PUBBLICO (S-1/F-1) delle IPO in watchlist
+# (Anthropic, Databricks, OpenAI). Appena una società esce dalla fase confidenziale
+# il filing compare nella full-text search: lo script scrive una riga in
+# market-watch/outbox.md, che il workflow telegram-notify.yml invia a Luca.
+# Serverless, nessun costo AI (solo Python + poche richieste a EDGAR).
+# Cadenza: ogni 6 ore. Forzabile da Actions -> Run workflow.
+
+on:
+  schedule:
+    - cron: "23 */6 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ipo-watch
+  cancel-in-progress: false
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Controlla EDGAR per prospetti IPO nuovi
+        env:
+          EDGAR_UA: "finance-ipo-watch luca.balloriani@gmail.com"
+        run: python3 market-watch/ipo-watch.py check
+
+      - name: Committa stato/outbox se cambiati
+        run: |
+          set -euo pipefail
+          if [ -z "$(git status --porcelain)" ]; then
+            echo "Nessun cambiamento (nessun filing nuovo)."
+            exit 0
+          fi
+          git config user.name "ipo-watch"
+          git config user.email "ipo-watch@users.noreply.github.com"
+          git add -A
+          git commit -m "ipo-watch: prospetto IPO rilevato $(date -u +%FT%TZ)"
+          git pull --rebase --autostash origin main || true
+          git push origin main

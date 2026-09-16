@@ -1,0 +1,47 @@
+name: Telegram tickets sender
+
+# Consegna le schede-ordine "a un tap" appena finiscono in coda.
+# Quando market-watch (o Luca) committa una nuova scheda in
+# market-watch/order-tickets.json, invia SUBITO su Telegram le schede 'pending'
+# coi bottoni Comprato/Salta/Rimanda (via tg-bridge send-tickets, che usa
+# reply_markup). I tap tornano indietro dal webhook (telegram-webhook.yml).
+# Il commit di stato usa [skip ci] per non ri-triggerarsi.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - market-watch/order-tickets.json
+
+permissions:
+  contents: write
+
+concurrency:
+  group: telegram-tickets
+  cancel-in-progress: false
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Invia le schede-ordine in coda (con bottoni)
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python3 market-watch/tg-bridge.py send-tickets
+
+      - name: Committa lo stato schede se cambiato
+        run: |
+          set -euo pipefail
+          if [ -z "$(git status --porcelain)" ]; then
+            echo "Nessuna scheda nuova da inviare."
+            exit 0
+          fi
+          git config user.name "tg-tickets"
+          git config user.email "tg-tickets@users.noreply.github.com"
+          git add market-watch/order-tickets.json
+          git commit -m "tg-tickets: schede inviate $(date -u +%FT%TZ) [skip ci]"
+          git pull --rebase --autostash origin main || true
+          git push origin main

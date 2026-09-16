@@ -1,0 +1,21 @@
+name: Weekly digest (settimana che viene)
+
+# Ogni domenica sera manda a Luca i catalizzatori in arrivo (da data/calendar.json).
+# Invia DIRETTAMENTE via api.telegram.org dal runner (rete libera), niente outbox,
+# nessun costo AI. Forzabile da Actions -> Run workflow.
+
+on:
+  schedule:
+    - cron: "0 17 * * 0"   # domenica 17:00 UTC (~18-19 ora italiana)
+  workflow_dispatch: {}
+
+jobs:
+  digest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Invia il digest settimanale
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python3 market-watch/weekly-digest.py send

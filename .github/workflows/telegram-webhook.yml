@@ -1,0 +1,85 @@
+name: Telegram webhook handler
+
+# Riceve gli update Telegram inoltrati dal Worker Cloudflare via repository_dispatch
+# (event_type: telegram_update) e li processa col codice Python (tg-bridge).
+# Event-driven (niente cron): latenza ~30-60s dal messaggio/tap. Il Worker ha già
+# risposto subito al tap (answerCallbackQuery); qui si fa il lavoro vero + AI.
+# Segreti: TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID (+ CLAUDE_CODE_OAUTH_TOKEN o
+# ANTHROPIC_API_KEY per l'aggiornami ragionato).
+
+on:
+  repository_dispatch:
+    types: [telegram_update]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: telegram-webhook
+  cancel-in-progress: false
+
+jobs:
+  handle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Processa l'update Telegram
+        id: proc
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          UPDATE_JSON: ${{ toJSON(github.event.client_payload.update) }}
+        run: |
+          set -euo pipefail
+          if [ -n "${CLAUDE_CODE_OAUTH_TOKEN:-}" ] || [ -n "${ANTHROPIC_API_KEY:-}" ]; then
+            export DIGEST_ENABLED=1
+          else
+            export DIGEST_ENABLED=0
+          fi
+          printf '%s' "$UPDATE_JSON" > /tmp/update.json
+          python3 market-watch/tg-bridge.py handle-update /tmp/update.json
+
+      - name: Genera e invia l'aggiornami ragionato (solo se richiesto)
+        if: steps.proc.outputs.need_digest == 'true'
+        env:
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          set -euo pipefail
+          npm install -g @anthropic-ai/claude-code >/dev/null 2>&1
+          cat > /tmp/prompt.txt <<'PROMPT'
+          Sei nel repository personale di gestione investimenti (rispetta CLAUDE.md).
+          Il repo e' GIA' aggiornato: NON fare git pull/commit/push, NON modificare file: sola lettura.
+          Esegui il ragionamento del comando /aggiornami: leggi market-watch/ultimo.md e il contesto
+          (data/portfolio.json, data/watchlist.json, data/calendar.json, data/rules.json) e produci la
+          TUA lettura ragionata del giro: cosa tenere d'occhio, dove punteresti con QUANDO (prezzo) /
+          QUANTO (EUR dalla riserva) / uscita, drawdown o invalidazioni, riserva disponibile.
+          E' un messaggio TELEGRAM: italiano semplice, NIENTE tabelle, NIENTE titoli con '#',
+          elenchi con '•' se servono, massimo ~3500 caratteri. Rispondi SOLO col testo del messaggio.
+          PROMPT
+          if claude -p "$(cat /tmp/prompt.txt)" --allowedTools "Read,Grep,Glob" --output-format text > /tmp/digest.txt 2> /tmp/claude.err; then
+            echo "digest generato ($(wc -c < /tmp/digest.txt) byte)"
+          else
+            echo "claude -p fallito:"; cat /tmp/claude.err || true
+            echo "⚠️ Non sono riuscito a generare l'aggiornami completo (errore tecnico). Usa 'stato' o riprova piu' tardi." > /tmp/digest.txt
+          fi
+          python3 market-watch/tg-bridge.py send /tmp/digest.txt
+
+      - name: Committa stato se cambiato (schede/richieste)
+        run: |
+          set -euo pipefail
+          if [ -z "$(git status --porcelain)" ]; then
+            echo "Nessun cambiamento da salvare."
+            exit 0
+          fi
+          git config user.name "tg-webhook"
+          git config user.email "tg-webhook@users.noreply.github.com"
+          git add -A
+          git commit -m "tg-webhook: stato update $(date -u +%FT%TZ) [skip ci]"
+          git pull --rebase --autostash origin main || true
+          git push origin main

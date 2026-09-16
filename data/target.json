@@ -1,0 +1,26 @@
+{
+  "pac_mensile_eur": 400,
+  "classe_quote": "Acc",
+  "broker_target": "Trade Republic",
+  "allocazione": [
+    {
+      "id": "fwra",
+      "nome": "Invesco FTSE All-World UCITS ETF Acc",
+      "isin": "IE000716YHJ7",
+      "wkn": "A3D7QX",
+      "ticker_xetra": "FWIA",
+      "classe": "azionario_world",
+      "peso": 0.59
+    },
+    {
+      "id": "sp500_synth",
+      "nome": "Invesco S&P 500 UCITS ETF Acc (sintetico)",
+      "isin": "IE00B3YCGJ38",
+      "wkn": "A1CYW7",
+      "ticker_xetra": null,
+      "classe": "azionario_sp500",
+      "peso": 0.41
+    }
+  ],
+  "note": "Personalizzare la composizione e i pesi in base alla propria strategia. Usare sempre l'ISIN per cercare gli strumenti su Trade Republic (i ticker possono cambiare per borsa). Preferire classi Acc per differire la tassazione."
+}

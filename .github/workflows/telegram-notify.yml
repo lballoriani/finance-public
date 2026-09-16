@@ -1,0 +1,58 @@
+name: Telegram notify
+
+# Relay notifiche: le routine cloud non possono chiamare api.telegram.org
+# (rete dell'ambiente bloccata), ma possono fare push su GitHub.
+# Ogni riga "- ..." AGGIUNTA a market-watch/outbox.md in un push su main
+# viene inviata a Luca su Telegram dai runner di GitHub (rete libera).
+# Secrets richiesti (Settings -> Secrets and variables -> Actions):
+#   TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - market-watch/outbox.md
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Invia a Telegram le righe nuove di outbox.md
+        env:
+          TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          CHAT: ${{ secrets.TELEGRAM_CHAT_ID }}
+          BEFORE: ${{ github.event.before }}
+          AFTER: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          # Diff dell'intero push; se il commit "before" non esiste (primo push / force), solo l'ultimo commit
+          if git cat-file -e "${BEFORE}^{commit}" 2>/dev/null; then
+            RANGE="${BEFORE}..${AFTER}"
+          else
+            RANGE="${AFTER}^..${AFTER}"
+          fi
+          MSGS=$(git diff "$RANGE" -- market-watch/outbox.md | { grep '^+- ' || true; } | sed 's/^+- //')
+          if [ -z "$MSGS" ]; then
+            echo "Nessuna notifica nuova nell'outbox."; exit 0
+          fi
+          if [ -z "$TOKEN" ] || [ -z "$CHAT" ]; then
+            echo "ERRORE: secrets TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID non configurati."; exit 1
+          fi
+          FAIL=0
+          while IFS= read -r msg; do
+            [ -z "$msg" ] && continue
+            resp=$(curl -s "https://api.telegram.org/bot${TOKEN}/sendMessage" \
+              --data-urlencode "chat_id=${CHAT}" \
+              --data-urlencode "text=${msg}" \
+              -d "disable_web_page_preview=true")
+            if echo "$resp" | grep -q '"ok":true'; then
+              echo "Inviato: $(echo "$msg" | cut -c1-70)"
+            else
+              echo "Invio FALLITO: $resp"; FAIL=1
+            fi
+          done <<< "$MSGS"
+          exit "$FAIL"

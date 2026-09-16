@@ -1,0 +1,27 @@
+{
+  "descrizione": "Calendario unico dei catalizzatori DATATI delle tesi in watchlist, ordinato per data. Mantenuto da market-watch a ogni giro: il check bisettimanale parte dagli eventi più imminenti per non perdere le finestre d'ingresso. 'tipo': 'datato' = data certa; 'stimato' = finestra approssimativa (IPO, filing).",
+  "ultimo_aggiornamento": "YYYY-MM-DD",
+  "eventi": [
+    {
+      "data": "YYYY-MM-DD",
+      "tipo": "datato",
+      "asset": "Example Corp",
+      "ticker": "EXPL",
+      "tesi_id": "example-long",
+      "evento": "Earnings Q3 — catalizzatore per conferma della tesi",
+      "azione": "Se la guidance viene confermata o alzata → valutare 2a tranche. Se tagliata → rivalutare la tesi.",
+      "priorita": "alta"
+    },
+    {
+      "data": "YYYY-Q4",
+      "tipo": "stimato",
+      "asset": "Example Corp IPO",
+      "ticker": null,
+      "tesi_id": "example-ipo",
+      "evento": "IPO prevista Q4 — attendere S-1 pubblico con price range",
+      "azione": "Promuovere ad attiva solo all'uscita di S-1 PUBBLICO. Entrare dopo le prime 2-4 settimane.",
+      "priorita": "media"
+    }
+  ],
+  "archiviati": []
+}

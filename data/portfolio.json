@@ -1,0 +1,60 @@
+{
+  "as_of": "YYYY-MM-DD",
+  "valuta": "EUR",
+  "pac_mensile_eur": 400,
+  "posizioni": [
+    {
+      "id": "cash",
+      "nome": "Liquidità conto corrente",
+      "tipo": "cash",
+      "valore_eur": 8500,
+      "versato_eur": 8500,
+      "broker": "Conto corrente",
+      "stato": "include il fondo emergenza (5.000-6.000 EUR); il resto è a rendimento zero",
+      "azione_prevista": "versare 600-700 EUR/mese su Trade Republic (400 PAC ETF + 200-300 riserva speculativa) finché il conto scende al livello del fondo emergenza"
+    },
+    {
+      "id": "etf_fwia",
+      "nome": "Invesco FTSE All-World UCITS ETF Acc (FWIA, IE000716YHJ7)",
+      "tipo": "ETF",
+      "valore_eur": 3500,
+      "versato_eur": 3355,
+      "broker": "Trade Republic",
+      "stato": "in linea col target (peso ~57%, target 59%)",
+      "azione_prevista": "piano d'accumulo 235 EUR/mese"
+    },
+    {
+      "id": "etf_sp500",
+      "nome": "Invesco S&P 500 UCITS ETF Acc sintetico (IE00B3YCGJ38)",
+      "tipo": "ETF",
+      "valore_eur": 2600,
+      "versato_eur": 2440,
+      "broker": "Trade Republic",
+      "stato": "in linea col target (peso ~43%, target 41%)",
+      "azione_prevista": "piano d'accumulo 165 EUR/mese"
+    },
+    {
+      "id": "tr_riserva_speculativa",
+      "nome": "Liquidità remunerata TR — riserva speculativa",
+      "tipo": "cash",
+      "valore_eur": 750,
+      "versato_eur": 750,
+      "broker": "Trade Republic",
+      "stato": "polvere secca disponibile. Il budget per le azioni singole = questa liquidità (nessun tetto aggregato).",
+      "azione_prevista": "usare solo su trigger della watchlist; mai dal PAC ETF"
+    },
+    {
+      "id": "example_stock",
+      "nome": "Example Corp (EXPL, US0000000001)",
+      "tipo": "azione",
+      "valore_eur": 500,
+      "versato_eur": 450,
+      "broker": "Trade Republic",
+      "prezzo_carico_eur": 45,
+      "quantita": 10,
+      "data_acquisto": "2026-01-15",
+      "stato": "posizione speculativa: esempio. Sostituire con le proprie posizioni reali.",
+      "azione_prevista": "tenere verso il target di uscita; ogni ipotesi di vendita passa dal tax-agent"
+    }
+  ]
+}

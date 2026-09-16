@@ -1,0 +1,22 @@
+# Segreti — mai committare
+market-watch/.secrets/
+*.local.json
+.env
+.env.*
+
+# Snapshot di staging del sync TR (dry-run): resta locale
+data/portfolio-tr-snapshot.json
+
+# Bytecode Python
+__pycache__/
+*.pyc
+
+# Output di graphify
+graphify-out/
+
+# Venv Python locale
+.venv/
+venv/
+
+# macOS
+.DS_Store

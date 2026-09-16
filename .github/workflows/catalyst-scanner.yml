@@ -1,0 +1,74 @@
+name: Catalyst scanner (breve termine)
+
+# Scansiona l'universo curato (~70 nomi) alla ricerca di opportunità breve termine
+# (post-event bottom, lockup IPO in scadenza, catalizzatore imminente).
+# Gira lunedì e giovedì alle 13:30 UTC (15:30 ora italiana), ~30 min dopo
+# il market-watch bisettimanale, così trova contesto già aggiornato.
+# Secrets: CLAUDE_CODE_OAUTH_TOKEN o ANTHROPIC_API_KEY (+ TELEGRAM_* per outbox).
+# Forzabile da Actions -> Run workflow.
+
+on:
+  schedule:
+    - cron: "33 13 * * 1,4"   # lun e gio, 13:33 UTC ≈ 15:33 ora italiana
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: catalyst-scanner
+  cancel-in-progress: false
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Installa Claude Code CLI
+        run: npm install -g @anthropic-ai/claude-code >/dev/null 2>&1
+
+      - name: Esegui catalyst-scanner
+        env:
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GITHUB_ACTIONS: "true"
+        run: |
+          set -euo pipefail
+          cat > /tmp/catalyst-prompt.txt <<'PROMPT'
+          Sei nel repository personale di gestione investimenti di Luca (rispetta CLAUDE.md).
+          Il tuo compito: eseguire il catalyst-scanner seguendo le istruzioni in .claude/agents/catalyst-scanner.md passo per passo.
+
+          Leggi prima il file .claude/agents/catalyst-scanner.md per avere le istruzioni complete, poi eseguilo dall'inizio (Step 1 → Step 6).
+
+          Vincoli operativi per questo ambiente cloud:
+          - git pull --rebase prima di modificare file (il repo potrebbe essere avanti)
+          - Al termine: git add -A, commit con messaggio "catalyst-scanner: YYYY-MM-DD — [N candidati | nessun candidato]", push
+          - Se il push fallisce: continua comunque (i file locali sono stati scritti)
+          - Non modificare file di mercato già prodotti dal market-watch di oggi (non sovrascrivere sezioni 1-5 di ultimo.md)
+          PROMPT
+          claude -p "$(cat /tmp/catalyst-prompt.txt)" \
+            --allowedTools "WebSearch,WebFetch,Read,Write,Edit,Grep,Glob,Bash" \
+            --output-format text \
+            2>/tmp/catalyst.err || {
+              echo "catalyst-scanner fallito:"
+              cat /tmp/catalyst.err || true
+              exit 1
+            }
+
+      - name: Committa risultati se non già committati dall'agent
+        if: always()
+        run: |
+          set -euo pipefail
+          if [ -z "$(git status --porcelain)" ]; then
+            echo "Nessun cambiamento residuo (agent ha già committato)."
+            exit 0
+          fi
+          git config user.name "catalyst-scanner"
+          git config user.email "catalyst-scanner@users.noreply.github.com"
+          git add -A
+          git commit -m "catalyst-scanner: $(date -u +%F) — fallback commit"
+          git pull --rebase --autostash origin main || true
+          git push origin main

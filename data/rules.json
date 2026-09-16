@@ -1,0 +1,74 @@
+{
+  "fiscale": {
+    "aliquota_plusvalenze": 0.26,
+    "preferenza_classi": "Acc",
+    "note": [
+      "Le plusvalenze da ETF/fondi (OICR) sono redditi di capitale: NON compensabili con minusvalenze pregresse.",
+      "Le minusvalenze (redditi diversi) sono compensabili entro 4 anni solo con plusvalenze da azioni singole, ETC/ETN e certificati — non con ETF.",
+      "Broker estero (es. eToro): regime dichiarativo (quadri RW/RT) — alla vendita NON viene trattenuto nulla, l'imposta si paga con la dichiarazione dell'anno successivo.",
+      "Trade Republic offre il regime amministrato per i clienti italiani.",
+      "Tracciare le minusvalenze compensabili in data/minusvalenze.json: prima di realizzare una plusvalenza speculativa, controllare se c'è un credito da compensare.",
+      "NOTA: verificare sempre la normativa vigente con un commercialista prima di vendere."
+    ]
+  },
+  "broker": {
+    "trasferimento_diretto": false,
+    "migrazione": "vendita su broker A -> prelievo su conto bancario -> bonifico SEPA al nuovo broker; raggruppare le vendite in un unico prelievo per minimizzare le fee",
+    "broker_target_pac": "Trade Republic"
+  },
+  "pac": {
+    "versamento_mensile_tr_eur": { "min": 600, "max": 700 },
+    "quota_etf_eur": 400,
+    "quota_riserva_speculativa_eur": { "min": 200, "max": 300 },
+    "regole": [
+      "I 400 EUR del PAC vanno SEMPRE sugli ETF target, ogni mese, senza eccezioni: mai dirottarli su azioni singole.",
+      "La quota riserva (200-300 EUR/mese) si parcheggia su Trade Republic come budget per le azioni singole della watchlist.",
+      "Il versamento extra continua finché il conto corrente scende al livello del fondo emergenza, poi si torna a 400 EUR/mese.",
+      "Tutto il surplus mensile va in riserva su Trade Republic ed è INTERAMENTE spendibile in azioni singole: nessun tetto aggregato. Il freno è strutturale: gli ETF ricevono 400 EUR/mese fissi, la riserva al massimo 200-300, quindi il cuore del portafoglio cresce più in fretta.",
+      "Sweep polvere secca (discrezionale, MAI automatico): se la riserva resta ferma ~3 mesi senza trigger d'ingresso, o supera ~700 EUR, valutare con l'utente se spostarne una parte sugli ETF. Decisione sempre dell'utente.",
+      "Gli importi dei piani d'accumulo si ritoccano solo quando il rebalance-agent segnala uno scostamento oltre la soglia del 5%, non mese per mese."
+    ]
+  },
+  "rischio": {
+    "cap_speculativo_pct_patrimonio": null,
+    "cap_speculativo_nota": "Nessun tetto aggregato sullo speculativo: il budget per le azioni singole = la liquidità della riserva su Trade Republic. Il controllo del rischio è nella disciplina per singola tesi (max_per_tesi) + lo sweep della polvere secca. Gli agenti riportano il peso % del comparto speculativo sul patrimonio come informazione.",
+    "soglia_ribilanciamento_pct": 0.05,
+    "max_tesi_attive": 8,
+    "max_tesi_attive_nota": "Tetto alle tesi con tier 'attiva' in watchlist: oltre 8, il giro profondo demota le più deboli a radar o archivio.",
+    "fondo_emergenza_eur": { "min": 5000, "max": 6000 },
+    "speculativo": {
+      "orizzonte": "definito per ogni tesi al momento dell'ingresso",
+      "stop_loss": "nessuno automatico: gli agenti segnalano drawdown dall'ingresso e invalidazione della tesi, la decisione di uscita è sempre dell'utente",
+      "max_per_tesi": "il budget disponibile è la riserva TR del momento; una tesi forte può occuparne fino al 100%, ma è qui il vero controllo del rischio: gli agenti segnalano sempre il rischio di concentrazione, entrano a tranche legate ai catalizzatori, non mediano al ribasso oltre l'invalidazione",
+      "valore_atteso": "Ogni tesi attiva porta uno scenario bull/base/bear con probabilità grezze e rendimento NETTO post-26%, più l'EV pesato (vedi watchlist.json -> schema_scenari). Regola: la tesi deve rendere già nel caso base; se l'EV netto è compresso, NON impegnare la riserva.",
+      "sizing": "La dimensione dipende dalla convinzione: size maggiore quando prob×EV è alto e la tesi NON è binaria; size piccola sulle scommesse binarie (PDUFA, IPO) e sulle alta-volatilità.",
+      "finanziamento": "riserva dedicata su Trade Republic, alimentata dalla quota mensile extra; mai dal PAC ETF",
+      "settori_focus": [
+        "tech / AI / semiconduttori",
+        "energia e materie prime",
+        "difesa e aerospazio",
+        "salute / farmaceutico / biotech"
+      ]
+    }
+  },
+  "budget_speculativo": {
+    "split_nota": "Soft tracking: il saldo TR è unico. I bucket sono tracking concettuale mostrato in 'stato' e 'aggiornami' — non conti separati reali.",
+    "bucket_lungo_pct": 0.40,
+    "bucket_lungo_nota": "~40% della riserva per tesi a orizzonte 12-24 mesi.",
+    "bucket_breve_pct": 0.60,
+    "bucket_breve_nota": "~60% della riserva per opportunità breve termine trovate dal catalyst-scanner (max 8 settimane).",
+    "breve_ev_min_pct": 20,
+    "breve_ev_min_nota": "EV netto minimo per le tesi breve: 20%.",
+    "breve_max_holding_settimane": 8,
+    "breve_max_tesi_attive": 4,
+    "breve_tipi_play": ["post_event_bottom", "lockup_expiry", "catalyst_imminent"]
+  },
+  "obiettivo": {
+    "nome": "[DESCRIVI IL TUO OBIETTIVO, es. acquisto casa]",
+    "orizzonte": "[ORIZZONTE TEMPORALE, es. ~3 anni]",
+    "importo_target_eur": null,
+    "data_target": null,
+    "finanziamento_previsto": "[DESCRIVI COME INTENDI FINANZIARLO]",
+    "derisking": "Solo se si decide di attingere agli investimenti per l'obiettivo, de-riskare la quota necessaria 12-18 mesi prima."
+  }
+}

@@ -1,0 +1,95 @@
+{
+  "cap_pct_patrimonio": null,
+  "cap_nota": "Nessun tetto aggregato: il budget = la riserva TR disponibile. Il controllo del rischio è per singola tesi + sweep della polvere secca.",
+  "orizzonte": "definito per ogni tesi al momento dell'ingresso",
+  "stop_loss": "nessuno automatico: segnalare drawdown e invalidazione della tesi, la decisione di uscita è dell'utente",
+  "max_per_tesi": "il budget disponibile è la riserva TR del momento; entrare a tranche sui catalizzatori, mai mediare al ribasso oltre l'invalidazione",
+  "finanziamento": "riserva dedicata su Trade Republic, alimentata con 200-300 EUR/mese; mai dal PAC ETF",
+  "settori_focus": [
+    "tech / AI / semiconduttori",
+    "energia e materie prime",
+    "difesa e aerospazio",
+    "salute / farmaceutico / biotech"
+  ],
+  "tier_legenda": "attiva = tesi con trigger/catalizzatore datato dove la riserva può essere investita; radar = monitoraggio leggero; chiusa = archiviata",
+  "schema_scenari": "Per ogni tesi 'attiva': blocco 'scenari' con casi bull/base/bear (prob = probabilità grezza soggettiva, somma ~1; prezzo_eur; rendimento_netto_pct al netto del 26%) e 'ev_netto_pct' = media pesata. La tesi deve rendere già nel caso base.",
+  "schema_sizing": "Per ogni tesi 'attiva': blocco 'sizing' con 'convinzione' (bassa/media/alta), 'binaria' (true per eventi sì/no), 'tranche' e 'importo_suggerito_eur'. Size maggiore se prob×EV alto e non binaria; piccola su binarie e alta-volatilità.",
+  "ultimo_check": "YYYY-MM-DD",
+  "tesi": [
+    {
+      "id": "example-ipo",
+      "asset": "Example Corp IPO",
+      "ticker": null,
+      "tier": "radar",
+      "status": "watching",
+      "bucket": "lungo",
+      "tesi": "Esempio di tesi IPO in attesa di quotazione. Acquisto dopo le prime 2-4 settimane, non sul picco del primo giorno.",
+      "trigger_ingresso": [
+        "S-1 pubblico con price range depositato",
+        "Valutare l'ingresso dopo le prime 2-4 settimane di quotazione"
+      ],
+      "trigger_uscita": [
+        "Range di rivendita da definire al momento dell'ingresso in base alla valutazione"
+      ],
+      "segnali_da_monitorare": [
+        "Filing S-1 o notizie su banche collocatrici",
+        "Round privati e valutazione implicita"
+      ],
+      "note": "Esempio di tesi IPO. Sostituire con le tesi reali.",
+      "ultimo_aggiornamento": "YYYY-MM-DD"
+    },
+    {
+      "id": "example-long",
+      "asset": "Example Sector Play",
+      "ticker": "EXPL",
+      "isin": "US0000000001",
+      "tier": "attiva",
+      "status": "in_posizione",
+      "bucket": "lungo",
+      "tesi": "Esempio di tesi long 12-24 mesi su un settore in crescita strutturale.",
+      "trigger_ingresso": [
+        "Conferma catalizzatore fondamentale (es. earnings, guidance alzata)"
+      ],
+      "trigger_uscita": [
+        "Target ~€X a 12-24 mesi se la tesi si conferma",
+        "Invalidazione: deterioramento strutturale dei fondamentali"
+      ],
+      "segnali_da_monitorare": [
+        "Trimestrali e guidance",
+        "Notizie di settore"
+      ],
+      "alert": {
+        "tipo": "posizione_aperta",
+        "piano_uscita": {
+          "gradini": [
+            {
+              "prezzo_eur": 60,
+              "vendi": "1/3 delle azioni",
+              "netto_stimato_eur": 185,
+              "nota": "Primo gradino di presa profitto"
+            }
+          ]
+        }
+      },
+      "scenari": {
+        "aggiornato": "YYYY-MM-DD",
+        "cambio_eur_usd": 1.10,
+        "ingresso_ipotizzato_eur": 45,
+        "bull": { "prob": 0.30, "prezzo_eur": 80, "rendimento_netto_pct": 57 },
+        "base": { "prob": 0.50, "prezzo_eur": 60, "rendimento_netto_pct": 22 },
+        "bear": { "prob": 0.20, "prezzo_eur": 35, "rendimento_netto_pct": -22 },
+        "ev_netto_pct": 26,
+        "nota": "Probabilità grezze soggettive. EV ~+26% netto pesando tutti gli scenari."
+      },
+      "sizing": {
+        "convinzione": "media",
+        "binaria": false,
+        "tranche": "2 tranche: 1a all'ingresso, 2a su conferma del catalizzatore",
+        "importo_suggerito_eur": "200-300",
+        "nota": "Size media: tesi non binaria, EV decente ma catalizzatore non ancora confermato."
+      },
+      "note": "Esempio di tesi long in posizione. Sostituire con le tesi reali.",
+      "ultimo_aggiornamento": "YYYY-MM-DD"
+    }
+  ]
+}

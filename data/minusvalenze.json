@@ -1,0 +1,16 @@
+{
+  "descrizione": "Registro delle minusvalenze realizzate (redditi diversi) e del loro utilizzo. Una perdita realizzata su azioni singole / ETC-ETN / certificati diventa un credito compensabile con future plusvalenze della stessa categoria, entro 4 anni.",
+  "regole": [
+    "COMPENSABILI: minusvalenze da azioni singole, ETC/ETN e certificati -> compensano solo plusvalenze della stessa categoria (redditi diversi), entro il 31/12 del 4° anno successivo a quello di realizzo.",
+    "NON COMPENSABILI: le plusvalenze da ETF/OICR sono redditi di CAPITALE -> non si compensano con queste minusvalenze.",
+    "CRYPTO ESCLUSA: regime separato: le minusvalenze crypto compensano solo plusvalenze crypto.",
+    "Broker estero (regime dichiarativo): la minusvalenza si certifica in dichiarazione.",
+    "Trade Republic: verificare se in regime amministrato gestisce lo zainetto fiscale in automatico.",
+    "USO OPERATIVO: prima di realizzare una plusvalenza speculativa, controllare se c'è una minusvalenza in scadenza da compensare."
+  ],
+  "aliquota": 0.26,
+  "ultimo_aggiornamento": "YYYY-MM-DD",
+  "minusvalenze_disponibili": [],
+  "utilizzi": [],
+  "stato": "Registro vuoto al setup. Alla prima chiusura in perdita di una tesi speculativa (azione/ETC/certificato), compilare 'minusvalenze_disponibili' con importo e anno di scadenza."
+}
