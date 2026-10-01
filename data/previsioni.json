@@ -1,0 +1,13 @@
+{
+  "descrizione": "Registro QUANTITATIVO delle previsioni: ogni chiamata con probabilità dichiarata, scadenza e criterio di risoluzione oggettivo. A risoluzione si assegna esito 1/0 e si calcola il Brier = (prob - esito)^2 (0 = perfetto). Complementa reports/track-record.md (pagella narrativa).",
+  "regole": [
+    "Una previsione entra qui SOLO se risolvibile: criterio oggettivo, data di scadenza, esito binario verificabile.",
+    "La probabilità si dichiara QUANDO si fa la previsione e non si ritocca a posteriori.",
+    "A ogni giro profondo: risolvere le previsioni scadute (esito 1/0 + brier), aggiungere le nuove fatte nel giro.",
+    "Ogni ~2 mesi: calcolare il Brier medio e la calibrazione per fascia. Aggiornare track-record.md.",
+    "Riferimento: superforecaster umani ~0.15-0.20 di Brier medio. L'obiettivo non è il numero ma scoprire dove siamo sistematicamente troppo sicuri."
+  ],
+  "ultimo_aggiornamento": "YYYY-MM-DD",
+  "previsioni": [],
+  "risolte": []
+}

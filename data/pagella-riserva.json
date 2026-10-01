@@ -1,0 +1,14 @@
+{
+  "descrizione": "Pagella della riserva speculativa (liquidità riserva TR + azioni singole su TR) contro un gemello che avesse messo gli stessi soldi, nelle stesse date, sull'ETF principale del PAC (data/target.json). Le compravendite interne al comparto non sono flussi; lo sono i versamenti in riserva (+) e gli sweep verso gli ETF (-). Una fotografia al mese. Dopo 6 mesi, se la riserva è sotto l'ETF di oltre 5 punti, se ne parla con l'utente (mai decisioni automatiche). Script: scripts/pagella.py. Valori d'ESEMPIO.",
+  "perimetro": "posizioni con broker 'Trade Republic' e id 'tr_riserva_speculativa' o tipo 'azione' (esclusi ETF del PAC, conto corrente, crypto, collezionabili)",
+  "base": {
+    "data": "2026-01-02",
+    "valore_eur": 1000.0,
+    "composizione": "riserva 500 + Example Corp 500",
+    "prezzo_etf": 125.0,
+    "fonte": "esempio",
+    "quote_etf": 8.0
+  },
+  "flussi": [],
+  "fotografie": []
+}

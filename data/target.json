@@ -1,0 +1,28 @@
+{
+  "pac_mensile_eur": 300,
+  "classe_quote": "Acc",
+  "broker_target": "Trade Republic",
+  "allocazione": [
+    {
+      "id": "world",
+      "nome": "Vanguard FTSE All-World UCITS ETF Acc",
+      "isin": "IE00BK5BQT80",
+      "wkn": "A2PKXG",
+      "ticker_xetra": "VWCE",
+      "classe": "azionario_world",
+      "peso": 0.8,
+      "yahoo": "VWCE.DE"
+    },
+    {
+      "id": "em",
+      "nome": "iShares Core MSCI EM IMI UCITS ETF Acc",
+      "isin": "IE00BKM4GZ66",
+      "wkn": "A111X9",
+      "ticker_xetra": "IS3N",
+      "classe": "azionario_emergenti",
+      "peso": 0.2,
+      "yahoo": "IS3N.DE"
+    }
+  ],
+  "note": "Allocazione d'ESEMPIO: personalizzare composizione e pesi in base alla propria strategia. Usare sempre l'ISIN per cercare gli strumenti su Trade Republic (i ticker possono cambiare per borsa). Preferire classi Acc per differire la tassazione."
+}

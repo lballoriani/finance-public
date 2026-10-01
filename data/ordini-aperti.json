@@ -1,0 +1,33 @@
+{
+  "descrizione": "Registro degli ordini limite 'parcheggiati' su Trade Republic (validità fino a 360 giorni): l'ingresso o la vendita al prezzo deciso scatta da solo, anche quando l'utente non guarda. Gli ordini li piazza/annulla l'utente in app; gli agenti li sorvegliano (scripts/ordini.py). Contenuto d'ESEMPIO.",
+  "regole": [
+    "Solo livelli già decisi in una tesi (zona d'ingresso, gradino di uscita): mai ordini 'a sensazione'.",
+    "TR: gli ordini limite accettano SOLO azioni intere (niente frazioni) e un ordine d'acquisto BLOCCA la liquidità finché non viene eseguito o annullato. La riserva spendibile si riduce di conseguenza (scripts/ordini.py mostra l'impegno).",
+    "Ogni ordine di VENDITA passa prima dal tax-agent (netto post-26% nel campo netto_stimato_eur).",
+    "Condizione di annullamento ('annulla_se') sempre scritta: se la tesi si rompe, un ordine d'acquisto parcheggiato comprerebbe proprio mentre il titolo crolla per il motivo sbagliato.",
+    "Stati: da_piazzare → piazzato (scadenza = +360 giorni) → eseguito | annullato | scaduto. Aggiornare con: python3 scripts/ordini.py set <id> <stato> [AAAA-MM-GG]."
+  ],
+  "ordini": [
+    {
+      "id": "expl-vendi-60",
+      "tesi_id": "example-long",
+      "titolo": "Example Corp",
+      "isin": "US0000000001",
+      "ticker": "EXAMPLE",
+      "lato": "sell",
+      "tipo_ordine": "limite",
+      "quantita": 3,
+      "prezzo_limite_eur": 60,
+      "netto_stimato_eur": 185,
+      "netto_nota": "esempio: netto post-26% stimato dal tax-agent",
+      "validita": "360 giorni",
+      "stato": "da_piazzare",
+      "piazzato_il": null,
+      "scade_il": null,
+      "motivo": "Primo gradino del piano di uscita della tesi d'esempio.",
+      "annulla_se": "La tesi viene invalidata prima dell'esecuzione.",
+      "dopo_esecuzione": "Aggiornare portfolio.json e il piano di uscita della tesi.",
+      "storico": []
+    }
+  ]
+}

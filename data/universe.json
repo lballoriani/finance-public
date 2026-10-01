@@ -1,0 +1,35 @@
+{
+  "descrizione": "Universo curato per il catalyst-scanner: ~70 nomi monitorati alla ricerca di opportunità breve termine (2-8 settimane). Espande i 4 settori focus della watchlist. Aggiornare ogni trimestre; i nomi già in watchlist.json sono inclusi intenzionalmente.",
+  "ultimo_aggiornamento": "YYYY-MM-DD",
+  "note_operative": "Il catalyst-scanner usa questo file come punto di partenza. Cerca per SETTORE (ricerca broad), non ticker per ticker — risparmia token e trova segnali trasversali. Aggiungere nuovi nomi rilevanti (IPO recenti, big-mover da notizie) direttamente qui senza aspettare il giro profondo.",
+  "settori": {
+    "tech_ai_semiconduttori": {
+      "note": "Focus: capex AI, chip inference, connettività data center, cloud",
+      "tickers": ["NVDA", "AMD", "QCOM", "INTC", "MU", "SMCI", "AVGO", "ARM", "TSM", "ASML", "MRVL", "ON"]
+    },
+    "mega_cap_tech": {
+      "note": "Per post-event bottom su grandi mossi post-earnings",
+      "tickers": ["META", "GOOGL", "MSFT", "AMZN", "AAPL", "NFLX", "TSLA"]
+    },
+    "energia_materie_prime": {
+      "note": "Focus: uranio, rame, GNL, oro, terre rare",
+      "tickers": ["CCJ", "FCX", "LNG", "XOM", "CVX", "SLB", "UUUU", "NXE", "UEC", "NEM", "MP"]
+    },
+    "difesa_aerospazio": {
+      "note": "Focus: difesa USA/EU, space, C5ISR, drone",
+      "tickers": ["RTX", "LMT", "NOC", "GD", "HII", "LDOS", "PLTR", "SAIC"]
+    },
+    "biotech_health": {
+      "note": "Focus: PDUFA imminenti, readout clinici, commercial ramp biotech",
+      "tickers": ["MRNA", "BIIB", "GILD", "REGN", "VRTX", "ALKS", "NBIX", "CAPR", "AMLX", "RCKT", "SRPT"]
+    },
+    "fintech_consumer_digital": {
+      "note": "Per post-earnings bottom su nomi growth con catalizzatori datati",
+      "tickers": ["SQ", "COIN", "PYPL", "SHOP", "HOOD", "UPST", "AFRM"]
+    },
+    "ipo_recenti_lockup": {
+      "note": "IPO degli ultimi 18 mesi con lockup in scadenza da monitorare — aggiornare con ogni nuova IPO rilevante",
+      "tickers": []
+    }
+  }
+}

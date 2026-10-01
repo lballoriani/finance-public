@@ -1,0 +1,53 @@
+name: Quotes (prezzi + filtro movimenti)
+
+# Aggiorna data/quotes.json (prezzi in EUR di posizioni, ETF e tesi in watchlist)
+# e data/movers.json (filtro meccanico sull'universo: cali forti, crolli e balzi su
+# volumi alti) da Yahoo Finance + cambi BCE. Serve perché l'ambiente cloud dei giri
+# Claude può non raggiungere queste fonti, mentre il runner GitHub sì: così
+# market-watch, catalyst-scanner e il guardiano giornaliero trovano prezzi freschi
+# e affidabili nel repo invece di fidarsi della ricerca web.
+# Nessun costo AI. Cadenza (giorni feriali, orari UTC):
+#   12:45 → prima del market-watch (13:00) e del catalyst-scanner (13:33) di lun/gio
+#   17:05 → prima del guardiano giornaliero (~17:20), a borsa USA aperta
+# Forzabile da Actions -> Run workflow.
+
+on:
+  # Cron disattivato nella copia pubblica: la versione operativa gira nel repo privato.
+  # Per usarlo nel tuo fork, togli il commento alle righe qui sotto.
+  # schedule:
+  #   - cron: "45 12 * * 1-5"
+  #   - cron: "5 17 * * 1-5"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: quotes
+  cancel-in-progress: false
+
+jobs:
+  quotes:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Test offline
+        run: python3 scripts/quotes.py selftest
+
+      - name: Scarica prezzi e filtro movimenti
+        run: python3 scripts/quotes.py all
+
+      - name: Committa se cambiati
+        run: |
+          set -euo pipefail
+          if [ -z "$(git status --porcelain data/quotes.json data/movers.json)" ]; then
+            echo "Nessun cambiamento."
+            exit 0
+          fi
+          git config user.name "quotes"
+          git config user.email "quotes@users.noreply.github.com"
+          git add data/quotes.json data/movers.json
+          git commit -m "quotes: prezzi e movimenti $(date -u +%FT%TZ)"
+          git pull --rebase --autostash origin main || true
+          git push origin main
